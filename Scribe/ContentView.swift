@@ -28,12 +28,16 @@ struct ContentView: View {
                     // Scrollable vertical stack
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 48) {
-                            ForEach(loader.loadedMarkdowns.indices, id: \.self) { index in
-                                Text(loader.loadedMarkdowns[index])
-                                    .multilineTextAlignment(.leading)
-                                    .onAppear {
-                                        if index == loader.loadedMarkdowns.count - 5 {
-                                            loader.loadNextBatch()
+                            ForEach(Array(0..<loader.totalCount), id: \.self) { index in
+                                if let markdown = loader.loadedMarkdowns[index] {
+                                    MarkdownRowView(index: index, content: markdown) {
+                                            loader.loadMarkdown(at: index)
+                                            loader.unloadMarkdowns(keepingAround: index, window: 40)
+                                        }
+                                } else {
+                                    ProgressView() // Show placeholder while loading
+                                        .onAppear {
+                                            loader.loadMarkdown(at: index)
                                         }
                                     }
                             }
@@ -61,4 +65,16 @@ struct ContentView: View {
 
 #Preview {
     ContentView()  // This now works without errors
+}
+
+private struct MarkdownRowView: View {
+    let index: Int
+    let content: String
+    let onAppear: () -> Void
+
+    var body: some View {
+        Text(content)
+            .multilineTextAlignment(.leading)
+            .onAppear(perform: onAppear)
+    }
 }
