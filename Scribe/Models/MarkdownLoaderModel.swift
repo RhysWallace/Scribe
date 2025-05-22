@@ -4,7 +4,7 @@ class MarkdownLoader: ObservableObject {
     @Published var loadedMarkdowns: [Int: String] = [:]
 
     private var allFiles: [URL] = []
-    private let batchSize = 8
+    private let batchSize = 30
     private var currentIndex = 0
 
     private var securityScopedAccess = false
@@ -24,10 +24,29 @@ class MarkdownLoader: ObservableObject {
         }
 
         let manager = MarkdownFileManager(folderURL: folderURL)
-        allFiles = manager.getAllMarkdownFileURLs()
+
+        // ✅ Sort files by date in filename (ascending: oldest → newest)
+        allFiles = manager.getAllMarkdownFileURLs().sorted(by: { a, b in
+            extractDate(from: a) ?? .distantPast < extractDate(from: b) ?? .distantPast
+        })
+
         loadedMarkdowns = [:]
         currentIndex = 0
         loadNextBatch()
+    }
+
+    private func extractDate(from url: URL) -> Date? {
+        let filename = url.deletingPathExtension().lastPathComponent
+        let pattern = #"note-(\d{4})-(\d{2})-(\d{2})"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: filename, range: NSRange(filename.startIndex..., in: filename)),
+              match.numberOfRanges == 4,
+              let year = Int((filename as NSString).substring(with: match.range(at: 1))),
+              let month = Int((filename as NSString).substring(with: match.range(at: 2))),
+              let day = Int((filename as NSString).substring(with: match.range(at: 3))) else {
+            return nil
+        }
+        return Calendar.current.date(from: DateComponents(year: year, month: month, day: day))
     }
 
     func loadNextBatch() {
@@ -86,5 +105,9 @@ class MarkdownLoader: ObservableObject {
 
     var totalCount: Int {
         allFiles.count
+    }
+    
+    var allFilenames: [String] {
+        allFiles.map { $0.lastPathComponent }
     }
 }
