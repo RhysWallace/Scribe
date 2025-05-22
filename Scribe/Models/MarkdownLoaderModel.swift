@@ -4,7 +4,7 @@ class MarkdownLoader: ObservableObject {
     @Published var loadedMarkdowns: [Int: String] = [:]
 
     private var allFiles: [URL] = []
-    private let batchSize = 20
+    private let batchSize = 8
     private var currentIndex = 0
 
     private var securityScopedAccess = false
@@ -61,6 +61,12 @@ class MarkdownLoader: ObservableObject {
                 }
             }
         }
+    }
+    
+    // Get filenames
+    func filename(at index: Int) -> String? {
+        guard index >= 0, index < allFiles.count else { return nil }
+        return allFiles[index].lastPathComponent
     }
     
     func unloadMarkdowns(keepingAround index: Int, window: Int = 30) {

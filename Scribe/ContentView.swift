@@ -30,9 +30,13 @@ struct ContentView: View {
                         LazyVStack(alignment: .leading, spacing: 48) {
                             ForEach(Array(0..<loader.totalCount), id: \.self) { index in
                                 if let markdown = loader.loadedMarkdowns[index] {
-                                    MarkdownRowView(index: index, content: markdown) {
-                                            loader.loadMarkdown(at: index)
-                                            loader.unloadMarkdowns(keepingAround: index, window: 40)
+                                    MarkdownRowView(
+                                        index: index,
+                                        filename: loader.filename(at: index) ?? "",
+                                        content: markdown
+                                    ) {
+                                        loader.loadMarkdown(at: index)
+                                        loader.unloadMarkdowns(keepingAround: index, window: 40)
                                         }
                                 } else {
                                     ProgressView() // Show placeholder while loading
@@ -69,12 +73,19 @@ struct ContentView: View {
 
 private struct MarkdownRowView: View {
     let index: Int
+    let filename: String
     let content: String
     let onAppear: () -> Void
 
     var body: some View {
-        Text(content)
-            .multilineTextAlignment(.leading)
-            .onAppear(perform: onAppear)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(filename)
+                .font(.caption)
+                .foregroundColor(.gray)
+
+            Text(content)
+                .multilineTextAlignment(.leading)
+        }
+        .onAppear(perform: onAppear)
     }
 }

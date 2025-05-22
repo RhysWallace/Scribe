@@ -25,34 +25,7 @@ struct SidebarView: View {
                                 )
                                 .id(date)
                                 .onAppear {
-                                    if isInitialLoad {
-                                        let today = calendar.startOfDay(for: Date())
-                                        DispatchQueue.main.async {
-                                            proxy.scrollTo(today, anchor: .center)
-                                            isInitialLoad = false
-                                        }
-                                    }
-
-                                    if date == loadedDates.first && !isLoading {
-                                        isLoading = true
-                                        let preservedDate = date
-
-                                        DispatchQueue.global(qos: .userInitiated).async {
-                                            let olderDates = (1...batchSize).compactMap { offset in
-                                                calendar.date(byAdding: .day, value: -offset, to: preservedDate)
-                                            }.sorted(by: <)
-
-                                            DispatchQueue.main.async {
-                                                loadedDates.insert(contentsOf: olderDates, at: 0)
-
-                                                // Delay scroll just enough to avoid a race
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                                                    proxy.scrollTo(preservedDate, anchor: .top)
-                                                    isLoading = false
-                                                }
-                                            }
-                                        }
-                                    }
+                                    handleOnAppear(for: date, using: proxy)
                                 }
                             }
                         }
@@ -117,6 +90,36 @@ struct SidebarView: View {
             )
         }
         .sorted { $0.month < $1.month } // Newest months first (top to bottom)
+    }
+    
+    // MARK: - Handle onAppear
+
+    private func handleOnAppear(for date: Date, using proxy: ScrollViewProxy) {
+        if isInitialLoad {
+            isInitialLoad = false
+            let today = calendar.startOfDay(for: Date())
+            DispatchQueue.main.async {
+                proxy.scrollTo(today, anchor: .center)
+            }
+        }
+
+        guard date == loadedDates.first, !isLoading else { return }
+        isLoading = true
+        let preservedDate = date
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let olderDates = (1...batchSize).compactMap {
+                calendar.date(byAdding: .day, value: -$0, to: preservedDate)
+            }.sorted(by: <)
+
+            DispatchQueue.main.async {
+                loadedDates.insert(contentsOf: olderDates, at: 0)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    proxy.scrollTo(preservedDate, anchor: .top)
+                    isLoading = false
+                }
+            }
+        }
     }
 }
 
