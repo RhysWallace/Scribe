@@ -23,7 +23,7 @@ struct ContentView: View {
             VStack {
                 HStack(spacing: 0) {
                     //Sidebar on left
-                    SidebarView(startDate: Date(), numberOfDays: 30)
+                    SidebarView()
                     
                     // Scrollable vertical stack
                     ScrollView {
