@@ -2,47 +2,55 @@ import SwiftUI
 
 struct SidebarView: View {
     @State private var loadedDates: [Date] = []
-    @State private var selectedDate: Date?
     @State private var isInitialLoad = true
     @State private var isLoading = false
     @State private var hasScrolledToToday = false
+    @Binding var selectedDate: Date?
     
     private let calendar = Calendar.current
     private let batchSize = 90
     
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(groupedDatesByMonth, id: \.month) { monthGroup in
-                        VStack(spacing: 12) {
-                            ForEach(monthGroup.dates, id: \.self) { date in
-                                DateRowView(
-                                    date: date,
-                                    isToday: calendar.isDate(date, inSameDayAs: Date()),
-                                    isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
-                                    onTap: { selectedDate = date }
-                                )
-                                .id(date)
-                                .onAppear {
-                                    handleOnAppear(for: date, using: proxy)
+        GeometryReader { outerGeo in
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(groupedDatesByMonth, id: \.month) { monthGroup in
+                            VStack(spacing: 12) {
+                                ForEach(monthGroup.dates, id: \.self) { date in
+                                    DateRowView(
+                                        date: date,
+                                        isToday: calendar.isDate(date, inSameDayAs: Date()),
+                                        isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
+                                        onTap: {
+                                            selectedDate = date
+                                        }
+                                    )
+                                    .id(date)
+                                    .onAppear {
+                                        handleOnAppear(for: date, using: proxy)
+                                    }
                                 }
                             }
+                            .padding(.bottom, 64)
                         }
-                        .padding(.bottom, 64)
+
+                        // Dynamic bottom spacer to keep today vertically centered
+                        Spacer(minLength: outerGeo.size.height / 2)
                     }
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
-            }
-            .defaultScrollAnchor(.bottom)
-            .frame(width: 200)
-            .background(Color(.windowBackgroundColor))
-            .onAppear {
-                if loadedDates.isEmpty {
-                    loadInitialDates()
+                .defaultScrollAnchor(.bottom)
+                .background(Color(.windowBackgroundColor))
+                .scrollIndicators(.hidden)
+                .onAppear {
+                    if loadedDates.isEmpty {
+                        loadInitialDates()
+                    }
                 }
             }
         }
+        .frame(width: 180)
     }
     
     // MARK: - Data Loading
