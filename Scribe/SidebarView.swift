@@ -16,22 +16,13 @@ struct SidebarView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(groupedDatesByMonth, id: \.month) { monthGroup in
-                            VStack(spacing: 12) {
-                                ForEach(monthGroup.dates, id: \.self) { date in
-                                    DateRowView(
-                                        date: date,
-                                        isToday: calendar.isDate(date, inSameDayAs: Date()),
-                                        isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
-                                        onTap: {
-                                            selectedDate = date
-                                        }
-                                    )
-                                    .id(date)
-                                    .onAppear {
-                                        handleOnAppear(for: date, using: proxy)
-                                    }
-                                }
-                            }
+                            MonthSectionView(
+                                monthGroup: monthGroup,
+                                selectedDate: $selectedDate,
+                                handleOnAppear: handleOnAppear,
+                                calendar: calendar,
+                                proxy: proxy
+                            )
                             .padding(.bottom, 64)
                         }
 
@@ -136,6 +127,33 @@ struct SidebarView: View {
 private struct MonthGroup {
     let month: Date
     let dates: [Date]
+}
+
+private struct MonthSectionView: View {
+    let monthGroup: MonthGroup
+    @Binding var selectedDate: Date?
+    let handleOnAppear: (Date, ScrollViewProxy) -> Void
+    let calendar: Calendar
+    let proxy: ScrollViewProxy
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ForEach(monthGroup.dates, id: \.self) { date in
+                DateRowView(
+                    date: date,
+                    isToday: calendar.isDate(date, inSameDayAs: Date()),
+                    isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
+                    onTap: {
+                        selectedDate = date
+                    }
+                )
+                .id(date)
+                .onAppear {
+                    handleOnAppear(date, proxy)
+                }
+            }
+        }
+    }
 }
 
 

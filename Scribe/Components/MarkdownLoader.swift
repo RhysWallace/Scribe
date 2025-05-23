@@ -14,10 +14,10 @@ struct MarkdownFileManager {
         let markdownFiles = files
             .filter { $0.pathExtension == "md" }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
-        print("Found markdown files")
+        /* print("Found markdown files")
         markdownFiles.forEach {
             print("\($0.lastPathComponent)")
-        }
+        } */
         
         return files
             .filter { $0.pathExtension == "md" }

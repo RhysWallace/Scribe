@@ -30,9 +30,12 @@ struct ContentView: View {
                     ScrollViewReader { proxy in
                         ScrollView {
                             MarkdownListView(loader: loader, proxy: proxy)
-                                .padding(32)
                                 .font(.system(size: 16))
+                            
+                            TextEditor()
+                                .frame(minHeight: 300)
                         }
+                        .padding(32)
                         .defaultScrollAnchor(.bottom)
                         .scrollIndicators(.hidden)
                         .onAppear {
