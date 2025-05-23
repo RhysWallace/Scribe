@@ -13,7 +13,8 @@ struct DateRowView: View {
                 .padding(.horizontal, 10)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .background(backgroundColor)
-                .foregroundColor(.black)
+                .foregroundColor(.contentTertiary)
+                .font(.caption)
                 .cornerRadius(8)
 
         }

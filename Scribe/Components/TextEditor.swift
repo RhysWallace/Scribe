@@ -8,13 +8,8 @@ struct TextEditor: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Editor")
-                .font(.caption)
-                .foregroundColor(.gray)
-            
             LinkSupportingTextView(text: $text)
                 .frame(minHeight: 200)
-                .border(Color.gray.opacity(0.3), width: 1)
                 .cornerRadius(4)
         }
     }
@@ -42,7 +37,7 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         textView.isHorizontallyResizable = false
         textView.autoresizingMask = [.width]
         
-        // Text container setup - this is crucial
+        // Text container setup
         textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
         textView.textContainer?.widthTracksTextView = true
         textView.textContainer?.heightTracksTextView = false
@@ -55,12 +50,12 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         textView.isAutomaticLinkDetectionEnabled = true
         textView.isAutomaticDataDetectionEnabled = true
         
-        /* Appearance - force specific colors to ensure visibility
-        textView.font = NSFont.systemFont(ofSize: 16)
-        textView.textColor = NSColor.black
-        textView.backgroundColor = NSColor.white
-        textView.insertionPointColor = NSColor.black
-         */
+        // Appearance - force specific colors to ensure visibility
+        textView.font = AppKitFont.body1
+        textView.textColor = AppKitColor.contentPrimaryA
+        textView.backgroundColor = AppKitColor.white
+        textView.typingAttributes = AppKitTextAttributes.body1
+        // textView.insertionPointColor = NSColor.black
         
         // Set the text content
         textView.string = text

@@ -30,8 +30,8 @@ struct ContentView: View {
                     ScrollViewReader { proxy in
                         ScrollView {
                             MarkdownListView(loader: loader, proxy: proxy)
-                                .font(.system(size: 16))
-                            
+                                .font(.body1)
+
                             TextEditor()
                                 .frame(minHeight: 300)
                         }
@@ -126,10 +126,6 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()  // This now works without errors
-}
-
 private struct MarkdownRowView: View {
     let index: Int
     let filename: String
@@ -140,11 +136,15 @@ private struct MarkdownRowView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(filename)
                 .font(.caption)
-                .foregroundColor(.gray)
+                .foregroundColor(.contentTertiary)
 
             Text(content)
                 .multilineTextAlignment(.leading)
         }
         .onAppear(perform: onAppear)
     }
+}
+
+#Preview {
+    ContentView()  // This now works without errors
 }
