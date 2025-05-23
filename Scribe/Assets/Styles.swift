@@ -50,15 +50,12 @@ enum AppKitTextAttributes {
     }
 }
 
-
-
-
-// Colours (from asset catalog)
+// Colours (adapted from asset catalog for use on AppKit elements)
 enum AppKitColor {
     static let contentPrimaryA = NSColor(named: "contentPrimaryA") ?? .labelColor
     static let contentSecondary = NSColor(named: "contentSecondary") ?? .secondaryLabelColor
     static let contentTeritary = NSColor(named: "contentTeritary") ?? .tertiaryLabelColor
-    static let white = NSColor(named: "white") ?? .white
+    static let contentWhite = NSColor(named: "contentWhite") ?? .white
 }
 
 

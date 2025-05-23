@@ -1,5 +1,7 @@
 import Foundation
 
+// Loads the last-selected folder at runtime
+
 class FolderBookmarkManager {
     private let bookmarkKey = "SavedFolderBookmark"
 

@@ -53,7 +53,7 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         // Appearance - force specific colors to ensure visibility
         textView.font = AppKitFont.body1
         textView.textColor = AppKitColor.contentPrimaryA
-        textView.backgroundColor = AppKitColor.white
+        textView.backgroundColor = AppKitColor.contentWhite
         textView.typingAttributes = AppKitTextAttributes.body1
         // textView.insertionPointColor = NSColor.black
         
