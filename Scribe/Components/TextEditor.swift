@@ -4,7 +4,7 @@ import AppKit
 // MARK: - Hybrid Text Editor (Plain text + Links)
 
 struct TextEditor: View {
-    @State private var text = "Start writing here...\n\nTry adding a link: https://example.com"
+    @Binding var text: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

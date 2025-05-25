@@ -6,6 +6,7 @@ struct ContentView: View {
     let bookmarkManager: FolderBookmarkManager
     @State private var folderURL: URL?
     @State private var selectedDate: Date? = nil
+    @StateObject private var persistenceManager: MarkdownPersistenceManager
     
     // Provide default values so ContentView() works without parameters
     init(
@@ -14,6 +15,13 @@ struct ContentView: View {
     ) {
         self.loader = loader
         self.bookmarkManager = bookmarkManager
+        
+        if let restoredURL = bookmarkManager.restoreBookmark() {
+            _persistenceManager = StateObject(wrappedValue: MarkdownPersistenceManager(folderURL: restoredURL))
+        } else {
+            // fallback dummy path to avoid crash during preview or testing
+            _persistenceManager = StateObject(wrappedValue: MarkdownPersistenceManager(folderURL: FileManager.default.temporaryDirectory))
+        }
     }
     
     var body: some View {
@@ -32,7 +40,7 @@ struct ContentView: View {
                             MarkdownListView(loader: loader, proxy: proxy)
                                 .font(.body1)
 
-                            TextEditor()
+                            TextEditor(text: $persistenceManager.content)
                                 .frame(minHeight: 300)
                         }
                         .padding(32)

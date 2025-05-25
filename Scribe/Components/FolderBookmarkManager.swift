@@ -35,6 +35,12 @@ class FolderBookmarkManager {
             if isStale {
                 print("Bookmark is stale. Consider re-saving.")
             }
+            
+            let started = restoredURL.startAccessingSecurityScopedResource()
+            if !started {
+                print("❌ Failed to start security scoped access for: \(restoredURL)")
+                return nil
+            }
 
             return restoredURL
         } catch {
