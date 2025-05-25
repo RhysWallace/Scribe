@@ -144,7 +144,11 @@ private struct MonthSectionView: View {
                     isToday: calendar.isDate(date, inSameDayAs: Date()),
                     isSelected: selectedDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false,
                     onTap: {
-                        selectedDate = date
+                        if calendar.isDate(date, inSameDayAs: Date()) {
+                            selectedDate = nil
+                        } else {
+                            selectedDate = date
+                        }
                     }
                 )
                 .id(date)

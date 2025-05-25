@@ -29,6 +29,7 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         scrollView.hasHorizontalScroller = false
         scrollView.autohidesScrollers = true
         scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
         
         // Configure text view with proper sizing
         textView.minSize = NSSize(width: 0, height: 0)
@@ -36,6 +37,9 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.autoresizingMask = [.width]
+        textView.textContainerInset = NSSize(width: 0, height: 0)
+        textView.textContainer?.lineFragmentPadding = 0
+        
         
         // Text container setup
         textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
@@ -49,12 +53,12 @@ private struct LinkSupportingTextView: NSViewRepresentable {
         textView.isRichText = false  // Start with plain text
         textView.isAutomaticLinkDetectionEnabled = true
         textView.isAutomaticDataDetectionEnabled = true
+        textView.drawsBackground = false
         
         // Appearance - force specific colors to ensure visibility
         textView.font = AppKitFont.body1
-        textView.textColor = AppKitColor.contentPrimaryA
-        textView.backgroundColor = AppKitColor.contentWhite
-        textView.typingAttributes = AppKitTextAttributes.body1
+        // textView.textColor = AppKitColor.contentPrimaryA
+        //textView.typingAttributes = AppKitTextAttributes.body1
         // textView.insertionPointColor = NSColor.black
         
         // Set the text content
@@ -101,5 +105,31 @@ private struct LinkSupportingTextView: NSViewRepresentable {
                 self.parent.text = textView.string
             }
         }
+    }
+}
+
+
+
+// MARK: - Preview
+
+#Preview {
+    StatefulPreviewWrapper("This is a test with a link: https://example.com") { binding in
+        TextEditor(text: binding)
+            .padding()
+            .frame(width: 600, height: 300)
+    }
+}
+
+struct StatefulPreviewWrapper<Value, Content: View>: View {
+    @State var value: Value
+    var content: (Binding<Value>) -> Content
+
+    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
+        self._value = State(initialValue: value)
+        self.content = content
+    }
+
+    var body: some View {
+        content($value)
     }
 }

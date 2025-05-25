@@ -56,6 +56,7 @@ enum AppKitColor {
     static let contentSecondary = NSColor(named: "contentSecondary") ?? .secondaryLabelColor
     static let contentTeritary = NSColor(named: "contentTeritary") ?? .tertiaryLabelColor
     static let contentWhite = NSColor(named: "contentWhite") ?? .white
+    static let clear = NSColor(named: "clear")
 }
 
 

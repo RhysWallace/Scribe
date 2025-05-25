@@ -13,7 +13,8 @@ struct MarkdownRowView: View {
                 .foregroundColor(.contentTertiary)
 
             Text(content)
-                .multilineTextAlignment(.leading)
+                .foregroundStyle(Color.contentPrimaryA)
+                .font(.body1)
         }
         .onAppear(perform: onAppear)
     }

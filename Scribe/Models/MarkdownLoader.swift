@@ -24,9 +24,17 @@ class MarkdownLoader: ObservableObject {
         }
 
         let manager = MarkdownFileManager(folderURL: folderURL)
+        let today = Calendar.current.startOfDay(for: Date())
 
-        // ✅ Sort files by date in filename (ascending: oldest → newest)
-        allFiles = manager.getAllMarkdownFileURLs().sorted(by: { a, b in
+        // Sort files by date in filename (ascending: oldest → newest)
+        allFiles = manager.getAllMarkdownFileURLs()
+            .filter { url in
+                if let date = extractDate(from: url) {
+                    return !Calendar.current.isDate(date, inSameDayAs: today)
+                }
+                return true
+            }
+            .sorted(by: { a, b in
             extractDate(from: a) ?? .distantPast < extractDate(from: b) ?? .distantPast
         })
 
